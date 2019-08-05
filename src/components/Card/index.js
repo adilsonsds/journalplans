@@ -1,17 +1,40 @@
 import React, { useState, useRef, useContext } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import BoardContext from '../Board/context';
+import ListContext from '../List/context';
 import { Container } from './styles';
+import { saveCard } from '../../services/api';
 
 export default function Card({ data, index, listIndex }) {
-    const [isChecked, setIsChecked] = useState(false);
+
+    const [content, setContent] = useState(data.content);
+    const [isChecked, setIsChecked] = useState(data.isChecked);
+    const ref = useRef();
+    const { move } = useContext(BoardContext);
+    const { addEmptyCard } = useContext(ListContext);
+
+    function save() {
+        saveCard(listIndex, index, { isChecked, content });
+    }
 
     function handleCheck(e) {
         setIsChecked(e.target.checked);
+        save();
     }
 
-    const ref = useRef();
-    const { move } = useContext(BoardContext);
+    function handleContentChange(e) {
+        setContent(e.target.value);
+        save();
+    }
+
+    function handleContentKeyPress(e) {
+        if (!e.target.value) return;
+
+        if (e.key === 'Enter') {
+            addEmptyCard();
+        }
+        save();
+    }
 
     const [{ isDragging }, dragRef] = useDrag({
         item: { type: 'CARD', index, listIndex },
@@ -60,11 +83,8 @@ export default function Card({ data, index, listIndex }) {
 
     return (
         <Container ref={ref} isDragging={isDragging} isChecked={isChecked}>
-            {/* <header>
-                {data.labels.map(label => <Label key={label} color={label} />)}
-            </header> */}
-            <input type="checkbox" checked={isChecked} onChange={handleCheck} />
-            <p>{data.content}</p>
+            <input className="card-task__check" type="checkbox" checked={isChecked} onChange={handleCheck} />
+            <input autoFocus className="card-task__input-text" type="text" value={content} onChange={handleContentChange} onKeyPress={handleContentKeyPress} placeholder="Digite" />
         </Container>
     )
 }

@@ -3,16 +3,21 @@ import styled, { css } from 'styled-components';
 export const Container = styled.div`
     position: relative;
     background: #FFF;
-    padding: 10px;
+    padding: 5px 10px;
     margin-bottom: 5px;
     border-radius: 15px;
     display: flex;
     align-items: center;
     cursor: grab;
+    transition: .5s all;
 
     ${ props => props.isChecked && css`
         opacity: 0.4;
     ` }
+
+    &:hover {
+        background: #63b4ef33;
+    }
 
     header {
         position: absolute;
@@ -31,6 +36,17 @@ export const Container = styled.div`
         height: 24px;
         border-radius: 2px;
         margin-top: 5px;
+    }
+
+    .card-task__check {
+
+    }
+
+    .card-task__input-text {
+        width: 100%;
+        padding: 5px;
+        border: none;
+        background: transparent;
     }
 
     ${ props => props.isDragging && css`
